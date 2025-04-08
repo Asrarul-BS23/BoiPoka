@@ -1,0 +1,36 @@
+# OS-specific  
+.DS_Store  
+Thumbs.db  
+
+# Logs  
+*.log  
+npm-debug.log*  
+yarn-debug.log*  
+yarn-error.log*  
+# VS Code  
+.vscode/  
+
+# JetBrains (Rider, WebStorm, IntelliJ)  
+.idea/  
+
+# Visual Studio  
+*.suo  
+*.user  
+*.cache  
+*.ncb  
+*.pdb  
+*.opendb  
+*.VC.db  
+.vs/  
+bin/  
+obj/  
+*.dll  
+*.exe  
+*.pdb  
+*.mdb  
+*.log  
+*.userprefs  
+*.csproj.user  
+*.sln.cache  
+*.sln.docstates  
+project.lock.json  
