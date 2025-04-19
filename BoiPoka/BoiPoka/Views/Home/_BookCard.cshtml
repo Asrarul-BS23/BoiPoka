@@ -1,0 +1,19 @@
+﻿@model BoiPoka.Models.Books
+
+<div class="card mb-3" style="max-width: 18rem; max-height: 20rem;">
+    <img class="card-img-top" src="@Model.CoverImage" style="width: 15rem; height: 10rem; object-fit: cover;" alt="Cover image of @Model.Title">
+    <div class="card-body">
+        <p class="card-title"><strong>@Model.Title</strong></p>
+        <p class="card-text">
+            @Model.Author <br />
+            ৳@Model.Price
+        </p>
+        <div class="card-links d-flex flex-row justify-content-center align-items-center gap-4">
+            <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId" class="btn btn-primary">View Details</a>
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="bookId" value="@Model.BookId" />
+                <button type="submit" class="btn btn-primary">Add To Cart</button>
+            </form>
+        </div>
+    </div>
+</div>

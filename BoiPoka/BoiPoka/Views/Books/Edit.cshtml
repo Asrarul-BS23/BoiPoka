@@ -1,0 +1,68 @@
+﻿@using BoiPoka.Models
+@model Books
+@{
+	ViewData["Title"] = "Edit Book";
+	//Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="book-container">
+	<div class="book-box">
+		<h2 class="text-center mb-4">Edit Book</h2>
+		<form asp-action="Edit" method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="BookId" />
+			<div class="mb-3">
+				<label asp-for="Title" class="form-label" ></label>
+				<input type="text" asp-for="Title" class="form-control" readonly />
+				<span asp-validation-for="Title" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="Description" class="form-label"></label>
+				<input type="text" asp-for="Description" class="form-control" />
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="Author" class="form-label"></label>
+				<input type="text" asp-for="Author" class="form-control" readonly />
+				<span asp-validation-for="Author" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="Price" class="form-label"></label>
+				<input type="number" asp-for="Price" class="form-control" />
+				<span asp-validation-for="Price" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="StockQuantity" class="form-label">Stock Quantity</label>
+				<input type="number" asp-for="StockQuantity" class="form-control" />
+				<span asp-validation-for="StockQuantity" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="Category" class="form-label"></label>
+				<input type="text" asp-for="Category" class="form-control" />
+				<span asp-validation-for="Category" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="CoverImage" class="form-label"></label>
+				<input type="text" asp-for="CoverImage" class="form-control" readonly/>
+				<span asp-validation-for="CoverImage" class="text-danger"></span>
+			</div>
+			<div class="mb-3">
+				<label asp-for="CreatedAt" class="form-label">Created At</label>
+				<input type="datetime" asp-for="CreatedAt" class="form-control" readonly/>
+				<span asp-validation-for="CreatedAt" class="text-danger"></span>
+			</div>
+
+			<input type="submit" value="Edit" class="btn btn-success w-100 p-2" />
+
+			<div class="text-center">
+				<a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Back</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+	}
+}
