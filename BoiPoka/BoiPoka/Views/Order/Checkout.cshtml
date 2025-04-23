@@ -1,0 +1,45 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Your Order Details";
+}
+<h2>Your Order Details</h2>
+
+<form asp-action="Checkout" asp-controller="Order" method="post">
+    <div class="form-group">
+        <label asp-for="ReceiverName"></label>
+        <input type="text" asp-for="ReceiverName" class="form-control" required />
+        <span asp-validation-for="ReceiverName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ReceiverPhone"></label>
+        <input type="number" asp-for="ReceiverPhone" class="form-control" required />
+        <span asp-validation-for="ReceiverPhone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ReceiverAddress"></label>
+        <textarea asp-for="ReceiverAddress" class="form-control" rows="3" required></textarea>
+        <span asp-validation-for="ReceiverAddress" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PaymentMethod"></label>
+        <input type="text" asp-for="PaymentMethod" class="form-control" required />
+        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="OrderDate" value="@DateTime.Now" />
+    <input type="hidden" asp-for="OrderStatus" value="Pending" />
+    <input type="hidden" asp-for="Subtotal" />
+    <input type="hidden" asp-for="DeliveryCharge" />
+    <input type="hidden" asp-for="TotalAmount" value="@(Model.Subtotal + Model.DeliveryCharge)" />
+
+    <hr />
+    <h4>Your Order Summary</h4>
+    <p><strong>Total Book Price:</strong> @Model.Subtotal.ToString("C")</p>
+    <p><strong>Delivery Charge:</strong> @Model.DeliveryCharge.ToString("C")</p>
+    <p><strong>Grand Total:</strong> @Model.TotalAmount.ToString("C")</p>
+
+    <button type="submit" class="btn btn-primary">Place Order</button>
+</form>
