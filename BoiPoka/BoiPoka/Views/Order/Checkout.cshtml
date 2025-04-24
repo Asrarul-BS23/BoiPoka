@@ -1,4 +1,4 @@
-﻿@model Order
+﻿@model BoiPoka.Models.Order
 @{
     ViewData["Title"] = "Your Order Details";
 }
@@ -30,16 +30,25 @@
     </div>
 
     <input type="hidden" asp-for="OrderDate" value="@DateTime.Now" />
-    <input type="hidden" asp-for="OrderStatus" value="Pending" />
-    <input type="hidden" asp-for="Subtotal" />
-    <input type="hidden" asp-for="DeliveryCharge" />
-    <input type="hidden" asp-for="TotalAmount" value="@(Model.Subtotal + Model.DeliveryCharge)" />
+    <input type="hidden" asp-for="OrderStatus" value="0" />
+    <input type="hidden" asp-for="Subtotal" value="@Model.Subtotal"/>
+    <input type="hidden" asp-for="DeliveryCharge" value="@Model.DeliveryCharge"/>
+    <input type="hidden" asp-for="TotalAmount" value="@Model.TotalAmount" />
 
     <hr />
     <h4>Your Order Summary</h4>
-    <p><strong>Total Book Price:</strong> @Model.Subtotal.ToString("C")</p>
-    <p><strong>Delivery Charge:</strong> @Model.DeliveryCharge.ToString("C")</p>
-    <p><strong>Grand Total:</strong> @Model.TotalAmount.ToString("C")</p>
-
+    <div class="bd-currency">
+        <p><strong>Total Book Price:</strong> @Model.Subtotal.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</p>
+        <p><strong>Delivery Charge:</strong> @Model.DeliveryCharge.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</p>
+        <p><strong>Grand Total:</strong> @Model.TotalAmount.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</p>
+    </div>
     <button type="submit" class="btn btn-primary">Place Order</button>
 </form>
+<div>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <style>
+        .bd-currency {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
+</div>
