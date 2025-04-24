@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BoiPoka.Services;
+using BoiPoka.ViewModels;
 
 namespace BoiPoka.Controllers;
 
@@ -24,26 +25,27 @@ public class OrderController : Controller
     public async Task<IActionResult> Checkout()
     {
         var user = await _userManager.GetUserAsync(User);
-        var order = _orderServices.GetOrderAsync(user.Id);
+        var order = await _orderServices.GetOrderAsync(user.Id);
         return View(order);
     }
     [HttpPost]
-    public async Task<IActionResult> Checkout(Order order)
+    public async Task<IActionResult> Checkout(CheckoutViewModel checkoutOrder)
     {
         if (!ModelState.IsValid)
         {
-            return View(order);
+            return View(checkoutOrder);
         }
         var user = await _userManager.GetUserAsync(User);
         var cart = await _orderServices.GetCartAsync(user.Id);
         if (cart == null || !cart.CartItems.Any())
         {
             ModelState.AddModelError("", "Cart is empty.");
-            return View(order);
+            return View(checkoutOrder);
         }
+        var order = _orderServices.GetPopulatedOrder(checkoutOrder, cart, user.Id);
         try
         {
-            _orderServices.PlaceOrderAsync(order, cart, user.Id);
+            await _orderServices.PlaceOrderAsync(order, cart);
 
             return RedirectToAction("OrderHistory", "Order");
         }

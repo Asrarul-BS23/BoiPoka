@@ -1,5 +1,6 @@
 ﻿using BoiPoka.Models;
 using BoiPoka.Repositories;
+using BoiPoka.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +34,7 @@ public class OrderServices : IOrderServices
     {
         return await _orderRepository.GetCartByUserIdAsync(userId);
     }
-    public async Task PlaceOrderAsync(Order order, Cart cart, string userId)
+    public Order GetPopulatedOrder(CheckoutViewModel checkoutOrder, Cart cart, string userId)
     {
         var orderItems = cart.CartItems.Select(ci => new OrderItem
         {
@@ -42,9 +43,23 @@ public class OrderServices : IOrderServices
             UnitPrice = ci.Book.Price,
             TotalPrice = ci.Quantity * ci.Book.Price,
         }).ToList();
-
-        order.OrderItems = orderItems;
-        order.UserId = userId;
+        var subtotal = orderItems.Sum(oi => oi.TotalPrice);
+        var order = new Order {
+            ReceiverName = checkoutOrder.ReceiverName,
+            ReceiverAddress = checkoutOrder.ReceiverAddress,
+            ReceiverPhone = checkoutOrder.ReceiverPhone,
+            PaymentMethod = checkoutOrder.PaymentMethod,
+            OrderDate = checkoutOrder.OrderDate,
+            OrderStatus = checkoutOrder.OrderStatus,
+            UserId = userId,
+            OrderItems = orderItems,
+            Subtotal = subtotal,
+            DeliveryCharge = checkoutOrder.DeliveryCharge,
+        };
+        return order;
+    }
+    public async Task PlaceOrderAsync(Order order, Cart cart)
+    {
 
         await _orderRepository.AddOrderAsync(order);
         await _orderRepository.RemoveRangeCartItemsAsync(cart);
