@@ -88,5 +88,11 @@ using (var scope = app.Services.CreateScope())
         await userManager.AddToRoleAsync(user, "Admin");
     }
 }
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var seeder = new BookSeeder();
+    await seeder.SeedBookAsync(context);
+}
 
 app.Run();
