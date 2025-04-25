@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Order Management</h5>
+                    <p class="card-text">Manage all orders placed by users.</p>
+                    <a href="@Url.Action("ManageOrders", "Order")" class="btn btn-primary">Go to Orders</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Book Management</h5>
+                    <p class="card-text">Add, update, or delete books in the system.</p>
+                    <a href="@Url.Action("Index", "Books")" class="btn btn-success">Go to Books</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

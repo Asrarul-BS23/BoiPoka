@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">User Profile</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Order History</h5>
+                    <p class="card-text">See all of your orders placed.</p>
+                    <a href="@Url.Action("OrderHistory", "Order")" class="btn btn-primary">Go to Orders</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Shopping Cart</h5>
+                    <p class="card-text">Items you added to the cart.</p>
+                    <a href="@Url.Action("Index", "Cart")" class="btn btn-success">Go to Cart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
