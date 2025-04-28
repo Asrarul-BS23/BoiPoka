@@ -2,9 +2,11 @@
 using BoiPoka.Models;
 using BoiPoka.ViewModels;
 using BoiPoka.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BoiPoka.Controllers;
-
+[Authorize]
 public class BooksController : Controller
 {
     private readonly IBookService _bookService;
@@ -16,14 +18,32 @@ public class BooksController : Controller
         _webHost = webHost;
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index()
     {
         var books = await _bookService.GetAllBooksAsync();
         return View(books);
     }
 
-    public IActionResult Create() => View();
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Create()
+    {
+        var categoryList = await _bookService.GetCategoriesAsync();
+        foreach(var category in categoryList)
+        {
+            Console.WriteLine(category.Name);
+        }
+        return View(new CreateBookViewModel
+        {
+            CategoryList = categoryList.Select(c => new SelectListItem
+            {
+                Value = c.Name,
+                Text = c.Name
+            }).ToList()
+        });
+    }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateBookViewModel viewBook, IFormFile file)
     {
@@ -43,42 +63,86 @@ public class BooksController : Controller
         return View(viewBook);
     }
 
+
+    public IActionResult CreateCategory()
+    {
+        return View();
+    }
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> CreateCategory(Category category)
+    {
+        if (category == null)
+        {
+            return View(category);
+        }
+        await _bookService.CreateNewCategoryAsync(category);
+        return RedirectToAction("Index", "Books");
+    }
+
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var book = await _bookService.GetBookByIdAsync(id);
         if (book == null) return NotFound();
-        return View(book);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Edit(int id, Books model)
-    {
-        if (id != model.BookId) return BadRequest();
-
-        if (ModelState.IsValid)
+        if(book.Category == null)
         {
-            try
-            {
-                await _bookService.UpdateBookAsync(model);
-                return RedirectToAction("Index", "Books");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Failed to update book.");
-                ModelState.AddModelError("", ex.Message);
-            }
+            var category = await _bookService.GetNullCategoryAsync("Uncategorized");
+            book.Category = category;
         }
-
-        return View(model);
+        var categoryList = await _bookService.GetCategoriesAsync();
+        var viewModel = new CreateBookViewModel
+        {
+            BookId = book.BookId,
+            Title = book.Title,
+            Category = book.Category.Name ?? "Uncategorized",
+            Description = book.Description,
+            Author = book.Author,
+            Price = book.Price,
+            StockQuantity = book.StockQuantity,
+            CoverImage = book.CoverImage,
+            CreatedAt = book.CreatedAt,
+            CategoryList = categoryList.Select(c => new SelectListItem
+            {
+                Value = c.Name,
+                Text = c.Name
+            }).ToList()
+        };
+        return View(viewModel);
     }
 
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, CreateBookViewModel viewModel, IFormFile file)
+    {
+        Console.WriteLine($"{id}==>{viewModel.BookId}");
+        if (id != viewModel.BookId) return BadRequest();
+
+        ModelState.Remove("file");
+
+        if (!ModelState.IsValid)
+            return View(viewModel);
+        try
+        {
+            await _bookService.UpdateBookAsync(viewModel, file, _webHost.WebRootPath);
+            return RedirectToAction("Index", "Books");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Failed to update book.");
+            ModelState.AddModelError("", ex.Message);
+        }
+        return View(viewModel);
+    }
+
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
         await _bookService.DeleteBookAsync(id);
         return RedirectToAction("Index", "Books");
     }
-
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {

@@ -1,5 +1,6 @@
 ﻿using BoiPoka.Data;
 using BoiPoka.Models;
+using BoiPoka.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoiPoka.Repositories;
@@ -17,6 +18,13 @@ public class BookRepository : IBookRepository
 
     public async Task<Books?> GetByIdAsync(int id) => await _context.Books.FindAsync(id);
 
+    public async Task<Category> GetBookCategory(string categoryName) => await _context.Categories.FirstOrDefaultAsync(cg => cg.Name == categoryName);
+    public async Task<IEnumerable<Category>> FindAllCategoryAsync() => await _context.Categories.ToListAsync();
+    public async Task CreateCategory(Category category)
+    {
+        await _context.Categories.AddAsync(category);
+        await _context.SaveChangesAsync();
+    }
     public async Task AddAsync(Books book)
     {
         _context.Books.Add(book);
