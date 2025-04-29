@@ -63,7 +63,7 @@ public class BooksController : Controller
     {
         return View();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateCategory(Category category)
     {
@@ -75,7 +75,6 @@ public class BooksController : Controller
         return RedirectToAction("Index", "Books");
     }
 
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var book = await _bookService.GetBookByIdAsync(id);
@@ -106,11 +105,9 @@ public class BooksController : Controller
         return View(viewModel);
     }
 
-
     [HttpPost]
     public async Task<IActionResult> Edit(int id, CreateBookViewModel viewModel, IFormFile file)
     {
-       
         if (id != viewModel.BookId) return BadRequest();
 
         ModelState.Remove("file");
