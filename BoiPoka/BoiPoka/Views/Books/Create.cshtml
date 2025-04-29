@@ -1,8 +1,7 @@
-﻿@using BoiPoka.Models
-@model Books
+﻿@model BoiPoka.ViewModels.CreateBookViewModel
 @{
 	ViewData["Title"] = "Create Book";
-	//Layout = "~/Views/Shared/_AccountLayout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="book-container">
@@ -37,7 +36,9 @@
 			</div>
 			<div class="mb-3">
 				<label asp-for="Category" class="form-label"></label>
-				<input type="text" asp-for="Category" class="form-control" />
+				<select asp-for="Category" asp-items="Model.CategoryList" class="form-select">
+					<option value="">-- Select a Category --</option>
+				</select>
 				<span asp-validation-for="Category" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
@@ -61,9 +62,3 @@
 		</form>
 	</div>
 </div>
-
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
-	}
-}

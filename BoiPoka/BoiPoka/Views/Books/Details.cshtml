@@ -11,7 +11,7 @@
                  src="@Model.CoverImage" alt="@Model.Title"
                  onerror="this.src='/images/default-book.jpg'">
             <div class="book-badge mt-3">
-                <span class="category-tag"><strong>Category:</strong> @Model.Category</span>
+                <span class="category-tag"><strong>Category:</strong> @Model.Category?.Name</span>
             </div>
         </div>
 
@@ -21,7 +21,7 @@
             <p class="book-author">by <strong>@Model.Author</strong></p>
 
             <div class="price-section">
-                <p class="price"><strong>Price:</strong> $@Model.Price.ToString("N0")</p>
+                <p class="price bd-currency"><strong>Price:</strong> @Model.Price.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</p>
                 <p class="stock-status @(Model.StockQuantity > 0 ? "in-stock" : "out-of-stock")">
                     @(Model.StockQuantity > 0 ? $"{Model.StockQuantity} in stock" : "Out of stock")
                 </p>
@@ -43,4 +43,12 @@
         </div>
     </div>
 
+</div>
+<div>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <style>
+        .bd-currency {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
 </div>

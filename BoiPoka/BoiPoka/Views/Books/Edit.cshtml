@@ -1,19 +1,21 @@
-﻿@using BoiPoka.Models
-@model Books
+﻿@model BoiPoka.ViewModels.CreateBookViewModel
 @{
 	ViewData["Title"] = "Edit Book";
-	//Layout = "~/Views/Shared/_AccountLayout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="book-container">
-	<div class="book-box">
-		<h2 class="text-center mb-4">Edit Book</h2>
-		<form asp-action="Edit" method="post">
+<h2 class="text-center mb-4">Edit Book</h2>
+<div class="book-container d-flex flex-row gap-4">
+	<div class="">
+		<img class="card-img-top align-items-center" src="@Model.CoverImage" style="width: 25rem; height: 30rem; object-fit: cover;" alt="Cover image of @Model.Title">
+	</div>
+	<div class="book-box w-100">
+		<form asp-action="Edit" method="post" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<input type="hidden" asp-for="BookId" />
 			<div class="mb-3">
 				<label asp-for="Title" class="form-label" ></label>
-				<input type="text" asp-for="Title" class="form-control" readonly />
+				<input type="text" asp-for="Title" class="form-control" />
 				<span asp-validation-for="Title" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
@@ -23,7 +25,7 @@
 			</div>
 			<div class="mb-3">
 				<label asp-for="Author" class="form-label"></label>
-				<input type="text" asp-for="Author" class="form-control" readonly />
+				<input type="text" asp-for="Author" class="form-control"/>
 				<span asp-validation-for="Author" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
@@ -38,12 +40,19 @@
 			</div>
 			<div class="mb-3">
 				<label asp-for="Category" class="form-label"></label>
-				<input type="text" asp-for="Category" class="form-control" />
+				@foreach(var category in Model.CategoryList)
+				{
+					Console.WriteLine(category.Text);
+				}
+				<select asp-for="Category" asp-items="Model.CategoryList" class="form-select">
+					<option value="">-- Select a Category --</option>
+				</select>
 				<span asp-validation-for="Category" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
 				<label asp-for="CoverImage" class="form-label"></label>
-				<input type="text" asp-for="CoverImage" class="form-control" readonly/>
+				<input type="file" name="file" class="form-control" />
+				<input type="hidden" asp-for="CoverImage" />
 				<span asp-validation-for="CoverImage" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
