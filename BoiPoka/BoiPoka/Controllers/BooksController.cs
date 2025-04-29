@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BoiPoka.Controllers;
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class BooksController : Controller
 {
     private readonly IBookService _bookService;
@@ -18,14 +18,13 @@ public class BooksController : Controller
         _webHost = webHost;
     }
 
-    [Authorize(Roles = "Admin")]
+    
     public async Task<IActionResult> Index()
     {
         var books = await _bookService.GetAllBooksAsync();
         return View(books);
     }
 
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         var categoryList = await _bookService.GetCategoriesAsync();
@@ -40,7 +39,6 @@ public class BooksController : Controller
         });
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateBookViewModel viewBook, IFormFile file)
     {
@@ -65,7 +63,7 @@ public class BooksController : Controller
     {
         return View();
     }
-    [Authorize(Roles = "Admin")]
+    
     [HttpPost]
     public async Task<IActionResult> CreateCategory(Category category)
     {
@@ -109,11 +107,10 @@ public class BooksController : Controller
     }
 
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Edit(int id, CreateBookViewModel viewModel, IFormFile file)
     {
-        Console.WriteLine($"{id}==>{viewModel.BookId}");
+       
         if (id != viewModel.BookId) return BadRequest();
 
         ModelState.Remove("file");
@@ -133,13 +130,13 @@ public class BooksController : Controller
         return View(viewModel);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
         await _bookService.DeleteBookAsync(id);
         return RedirectToAction("Index", "Books");
     }
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
