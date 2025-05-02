@@ -28,10 +28,7 @@ public class BooksController : Controller
     public async Task<IActionResult> Create()
     {
         var categoryList = await _bookService.GetCategoriesAsync();
-        foreach(var category in categoryList)
-        {
-            Console.WriteLine(category.Name);
-        }
+        
         return View(new CreateBookViewModel
         {
             CategoryList = categoryList.Select(c => new SelectListItem

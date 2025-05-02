@@ -1,14 +1,14 @@
 ﻿@model BoiPoka.Models.Books
 
-<div class="card mb-3" style="max-width: 18rem; max-height: 20rem;">
-    <img class="card-img-top" src="@Model.CoverImage" style="width: 15rem; height: 10rem; object-fit: cover;" alt="Cover image of @Model.Title">
+<div class="card shadow-sm mb-3 justify-content-center align-items-center" style=" font-size: 14px; width: 17rem; height: 22rem;">
+    <img class="card-img-top mt-2" src="@Model.CoverImage" style="width: 8rem; height: 11rem; object-fit: cover;" alt="Cover image of @Model.Title">
     <div class="card-body">
         <p class="card-title"><strong>@Model.Title</strong></p>
-        <p class="card-text">
+        <p class="card-text bd-currency">
             @Model.Author <br />
-            ৳@Model.Price
+            @Model.Price.ToString("C", new System.Globalization.CultureInfo("bn-BD"))
         </p>
-        <div class="card-links d-flex flex-row justify-content-center align-items-center gap-4">
+        <div class="card-links d-flex flex-row justify-content-center align-items-center gap-2" style="font-size: 16px;">
             <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId" class="btn btn-primary">View Details</a>
             <form asp-controller="Cart" asp-action="AddToCart" method="post">
                 <input type="hidden" name="bookId" value="@Model.BookId" />
@@ -16,4 +16,12 @@
             </form>
         </div>
     </div>
+</div>
+<div>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <style>
+        .bd-currency {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
 </div>

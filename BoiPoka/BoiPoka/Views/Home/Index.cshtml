@@ -1,13 +1,56 @@
-﻿@model IEnumerable<BoiPoka.Models.Books>
+﻿@model BoiPoka.ViewModels.BookStoreViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
-<h2 class="m-4 text-center">BoiPoka: Your Online Book Store</h2>
-<div class="row">
-    @foreach (var book in Model)
-    {
-        <div class="col-md-4">
-            @Html.Partial("_BookCard", book)
+
+
+<div class="container py-4">
+    
+    <form asp-action="Index" method="post" class="row gx-2 gy-2 align-items-center mb-4">
+        
+        <div class="col-auto">
+            <select asp-for="SelectedCategoryName" asp-items="Model.CategoryList"
+                    class="form-select">
+                <option value="">All Categories</option>
+            </select>
         </div>
-    }
+
+        
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success"> 
+                Apply Filters 
+            </button> 
+        </div> 
+
+        
+        <div class="col">
+            <div class="input-group">
+                <input asp-for="SearchQuery"
+                       class="form-control"
+                       placeholder="Search books…" />
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i> 
+                    Search
+                </button>
+            </div>
+        </div>
+        <input type="hidden" asp-for="Books" value="@Model.Books" />
+        <input type="hidden" asp-for="CategoryList" value="@Model.CategoryList" />
+        
+    </form>
+
+    <div class="align-items-center align-content-center">
+
+      <div class="row g-4">
+        @for (int i = 0; i < Model.Books.Count(); i++)
+        {
+            var book = Model.Books.ElementAt(i);
+            <div class="col-md-3">
+               @Html.Partial("_BookCard", book)
+            </div>
+        }
+      </div>
+    </div>
+  </div>
 </div>
+
