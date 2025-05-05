@@ -26,9 +26,9 @@
             <tbody>
                 @foreach (var item in Model.CartItems)
                 {
-                    <tr>
+                    <tr class="bd-currency">
                         <td>@item.Book.Title</td>
-                        <td>@item.Book.Price.ToString("C")</td>
+                        <td>@item.Book.Price.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</td>
                         <td>
                             <form id="update-form-@item.Id" asp-action="UpdateCart" method="post" class="d-inline">
                                 <input type="hidden" name="cartItemId" value="@item.Id" />
@@ -38,7 +38,7 @@
                         <td>
                             <button type="submit" form="update-form-@item.Id" class="btn btn-sm btn-outline-secondary">Update</button>
                         </td>
-                        <td>@((item.Quantity * item.Book.Price).ToString("C"))</td>
+                        <td>@((item.Quantity * item.Book.Price).ToString("C", new System.Globalization.CultureInfo("bn-BD")))</td>
                         <td>
                             <form asp-action="RemoveFromCart" method="post">
                                 <input type="hidden" name="cartItemId" value="@item.Id" />
@@ -51,7 +51,7 @@
             <tfoot>
                 <tr>
                     <td colspan="4" class="text-end"><strong>Grand Total:</strong></td>
-                    <td colspan="2">@Model.Total.ToString("C")</td>
+                    <td colspan="2" class="bd-currency">@Model.Total.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</td>
                 </tr>
             </tfoot>
         </table>
@@ -59,4 +59,12 @@
             <a asp-controller="Order" asp-action="Checkout" class="btn btn-primary">Checkout</a>
         </div>
     }
+</div>
+<div>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <style>
+        .bd-currency {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
 </div>

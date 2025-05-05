@@ -13,8 +13,10 @@ public class BookService : IBookService
         _repository = repository;
     }
 
-    public async Task<List<Books>> GetAllBooksAsync() => await _repository.GetAllAsync();
-
+    public async Task<IEnumerable<T>> GetAllTsAsync<T>() where T : class
+    {
+        return await _repository.GetAllTsAsync<T>();
+    }
     public async Task<Books?> GetBookByIdAsync(int id) => await _repository.GetByIdAsync(id);
 
     public async Task CreateNewCategoryAsync(Category category) => await _repository.CreateCategory(category);
@@ -37,11 +39,6 @@ public class BookService : IBookService
         viewModel.CoverImage = "/uploads/" + fileName;
 
         var category = await _repository.GetBookCategory(viewModel.Category);
-        //if (category == null) 
-        //{
-        //    await _repository.CreateCategory(viewModel.Category);
-        //    category = await _repository.GetBookCategory(viewModel);
-        //}
 
         var book = new Books
         {
@@ -59,10 +56,7 @@ public class BookService : IBookService
         await _repository.AddAsync(book);
     }
 
-    public async Task<IEnumerable<Category>> GetCategoriesAsync()
-    {
-        return await _repository.FindAllCategoryAsync(); 
-    }
+
     public async Task<Category> GetNullCategoryAsync(string categoryName)
     {
         return await _repository.GetBookCategory(categoryName);
@@ -72,6 +66,10 @@ public class BookService : IBookService
         if (file != null && file.Length>0)
         {
             string uploadFolder = Path.Combine(rootPath, "uploads");
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
             string fileName = Path.GetFileName(file.FileName);
             string fileSavePath = Path.Combine(uploadFolder, fileName);
 
@@ -81,23 +79,19 @@ public class BookService : IBookService
             }
             viewModel.CoverImage = "/uploads/" + fileName;
         }
-        //book.CoverImage = "/uploads/" + fileName;
+        
         var category = await _repository.GetBookCategory(viewModel.Category);
-
-        var book = new Books
-        {
-            BookId = viewModel.BookId,
-            Title = viewModel.Title,
-            Description = viewModel.Description,
-            Author = viewModel.Author,
-            Price = viewModel.Price,
-            StockQuantity = viewModel.StockQuantity,
-            Category = category,
-            CategoryId = category.Id,
-            CreatedAt = viewModel.CreatedAt,
-            CoverImage = viewModel.CoverImage
-
-        };
+        var book = await _repository.GetByIdAsync(viewModel.BookId);
+        book.Title = viewModel.Title;
+        book.Description = viewModel.Description;
+        book.Author = viewModel.Author;
+        book.Price = viewModel.Price;
+        book.StockQuantity = viewModel.StockQuantity;
+        book.Category = category;
+        book.CategoryId = category.Id;
+        book.CreatedAt = viewModel.CreatedAt;
+        book.CoverImage = viewModel.CoverImage;
+  
         await _repository.UpdateAsync(book);
     }
 
@@ -110,4 +104,3 @@ public class BookService : IBookService
         }
     }
 }
-

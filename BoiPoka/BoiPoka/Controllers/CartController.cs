@@ -1,14 +1,12 @@
-using BoiPoka.Data;
+using BoiPoka.Extensions;
 using BoiPoka.Models;
 using BoiPoka.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BoiPoka.Controllers;
 
-[Authorize]
 public class CartController : Controller
 {
     private readonly ICartService _cartService;
@@ -28,13 +26,20 @@ public class CartController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddToCart(int bookId)
+    public async Task<IActionResult> AddToCart(int bookId, string returnUrl)
     {
         var user = await _userManager.GetUserAsync(User);
         await _cartService.AddToCartAsync(user.Id, bookId);
-        return RedirectToAction(nameof(Index));
+        return Redirect(returnUrl ?? "/");
     }
-
+    [HttpPost]
+    public async Task<IActionResult> AddToCartSession(int bookId, string returnUrl)
+    {
+        var cart = HttpContext.Session.GetObject<List<int>>("Cart") ?? new List<int>();
+        cart.Add(bookId);
+        HttpContext.Session.SetObject("Cart", cart);
+        return Redirect(returnUrl ?? "/");  
+    }
     [HttpPost]
     public async Task<IActionResult> UpdateCart(int cartItemId, int quantity)
     {

@@ -49,20 +49,28 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.UserId == userId)
             .Include(o => o.OrderItems)
             .ThenInclude(oi => oi.Book)
+            .OrderByDescending(o => o.OrderDate)
             .ToListAsync();
     }
 
+    public async Task UpdateStockAsync(Books book)
+    {
+        _context.Update(book);
+        await _context.SaveChangesAsync();
+    }
+   
     public async Task<ICollection<Order>> GetAllOrdersAsync()
     {
         return await _context.Orders
             .Include(o => o.User)
             .Include(o => o.OrderItems)
             .ThenInclude(oi => oi.Book)
+            .OrderByDescending (o => o.OrderDate)
             .ToListAsync();
     }
 
-    public async Task<Order> FindOrderByIdAsync(int orderId)
+    public async Task<T> FindByIdAsync<T>(int id) where T : class
     {
-        return await _context.Orders.FindAsync(orderId);
+        return await _context.Set<T>().FindAsync(id);
     }
 }

@@ -14,12 +14,16 @@ public class BookRepository : IBookRepository
         _context = context;
     }
 
-    public async Task<List<Books>> GetAllAsync() => await _context.Books.ToListAsync();
+    public async Task<IEnumerable<T>> GetAllTsAsync<T>() where T : class
+    {
+        return await _context.Set<T>().ToListAsync();
+    }
 
-    public async Task<Books?> GetByIdAsync(int id) => await _context.Books.FindAsync(id);
+    public async Task<Books?> GetByIdAsync(int id) => await _context.Books
+        .Include(b => b.Category)
+        .FirstOrDefaultAsync(b=> b.BookId == id);
 
     public async Task<Category> GetBookCategory(string categoryName) => await _context.Categories.FirstOrDefaultAsync(cg => cg.Name == categoryName);
-    public async Task<IEnumerable<Category>> FindAllCategoryAsync() => await _context.Categories.ToListAsync();
     public async Task CreateCategory(Category category)
     {
         await _context.Categories.AddAsync(category);

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BoiPoka.Models;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace BoiPoka.ViewModels;
 
@@ -17,6 +20,8 @@ public class CreateBookViewModel
     public int StockQuantity { get; set; }
     [Required(ErrorMessage = "Category is required!")]
     public string Category { get; set; }
+    [ValidateNever]
+    public List<SelectListItem> CategoryList { get; set; }
     public string CoverImage { get; set; }
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; } = DateTime.Now;

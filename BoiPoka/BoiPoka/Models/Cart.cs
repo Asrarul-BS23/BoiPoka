@@ -16,5 +16,5 @@ public class Cart
     public decimal Subtotal => CartItems.Sum(item => item.Quantity * item.Book.Price);
     
     [NotMapped]
-    public decimal Total => Subtotal; // Can add taxes/shipping here if needed
+    public decimal Total => Subtotal;
 }

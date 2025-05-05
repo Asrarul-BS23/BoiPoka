@@ -1,8 +1,8 @@
-﻿@model List<BoiPoka.Models.Books>
+﻿@model IEnumerable<BoiPoka.Models.Books>
 
 @{
 	ViewData["Title"] = "Manage Books";
-	//Layout = "~/Views/Shared/_AccountLayout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2 class="text-center">Manage Books</h2>
@@ -23,7 +23,6 @@
 				<th>Author</th>
 				<th>Price</th>
 				<th>Stock Quantity</th>
-				<th>Category</th>
 				<th>Created</th>
 			</tr>
 		</thead>
@@ -36,7 +35,6 @@
 					<td>@book.Author</td>
 					<td class="bd-currency">@book.Price.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</td>
 					<td>@book.StockQuantity</td>
-					<td>@book.Category</td>
 					<td>@book.CreatedAt</td>
 					<td>
 						<div class="d-flex gap-2">

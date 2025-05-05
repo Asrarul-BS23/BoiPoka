@@ -1,7 +1,11 @@
 ﻿@model BoiPoka.Models.Books
-
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Users> signInManager
+@{
+    var actionName = signInManager.IsSignedIn(User) ? "AddToCart" : "AddToCartSession";
+}
 <div class="card shadow-sm mb-3 justify-content-center align-items-center" style=" font-size: 14px; width: 17rem; height: 22rem;">
-    <img class="card-img-top mt-2" src="@Model.CoverImage" style="width: 8rem; height: 11rem; object-fit: cover;" alt="Cover image of @Model.Title">
+    <img class="card-img-top mt-2" src="@Model.CoverImage" style="width: 8rem; height: 11rem; object-fit: cover;" alt="Cover image of @Model.Title" onerror="this.src='/uploads/default.jpg'" />
     <div class="card-body">
         <p class="card-title"><strong>@Model.Title</strong></p>
         <p class="card-text bd-currency">
@@ -10,10 +14,14 @@
         </p>
         <div class="card-links d-flex flex-row justify-content-center align-items-center gap-2" style="font-size: 16px;">
             <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId" class="btn btn-primary">View Details</a>
-            <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                <input type="hidden" name="bookId" value="@Model.BookId" />
-                <button type="submit" class="btn btn-primary">Add To Cart</button>
-            </form>
+            @if (!User.IsInRole("Admin"))
+            {
+                <form asp-controller="Cart" asp-action="@actionName" method="post">
+                    <input type="hidden" name="bookId" value="@Model.BookId" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button type="submit" class="btn btn-primary">Add To Cart</button>
+                </form>
+            }
         </div>
     </div>
 </div>
