@@ -1,21 +1,25 @@
 ﻿@model BoiPoka.Models.Books
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Users> signInManager
 @{
     ViewData["Title"] = "Book Details";
+    var actionName = signInManager.IsSignedIn(User) ? "AddToCart" : "AddToCartSession";
+
 }
 
 <div class="book-detail-container">
     <div class="book-display d-flex" style="gap: 2rem;">
-        
+
         <div class="book-cover" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
             <img class="cover-image" style="width: 100%; max-width: 300px; height: 400px; object-fit: cover;"
-                 src="@Model.CoverImage" alt="@Model.Title"
-                 onerror="this.src='/images/default-book.jpg'">
+            src="@Model.CoverImage" alt="@Model.Title"
+            onerror="this.src='/uploads/default.jpg'" />
             <div class="book-badge mt-3">
                 <span class="category-tag"><strong>Category:</strong> @Model.Category?.Name</span>
             </div>
         </div>
 
-        
+
         <div class="book-info" style="flex: 2;">
             <h1 class="book-title">@Model.Title</h1>
             <p class="book-author">by <strong>@Model.Author</strong></p>
@@ -31,15 +35,18 @@
                 <h3>Description</h3>
                 <p>@Model.Description</p>
             </div>
-
-            <div class="action-buttons mt-4">
-                <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                    <input type="hidden" name="bookId" value="@Model.BookId" />
-                    <button type="submit" class="btn btn-primary" @(Model.StockQuantity < 1 ? "disabled" : "")>
-                        <i class="fas fa-shopping-cart"></i> Add To Cart
-                    </button>
-                </form>
-            </div>
+            @if (!User.IsInRole("Admin"))
+            {
+                <div class="action-buttons mt-4">
+                    <form asp-controller="Cart" asp-action="@actionName" method="post">
+                        <input type="hidden" name="bookId" value="@Model.BookId" />
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                        <button type="submit" class="btn btn-primary" @(Model.StockQuantity < 1 ? "disabled" : "")>
+                            <i class="bi bi-cart-plus"></i> Add To Cart
+                        </button>
+                    </form>
+                </div>
+            }
         </div>
     </div>
 

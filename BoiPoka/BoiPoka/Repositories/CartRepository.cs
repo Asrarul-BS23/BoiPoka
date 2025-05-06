@@ -47,5 +47,13 @@ public class CartRepository : ICartRepository
     {
         _context.CartItems.Remove(cartItem);
     }
+
+    public async Task<int> GetCartItemCountAsync(string userId)
+    {
+        return await _context.Carts
+            .Where(c => c.UserId == userId)
+            .SelectMany(c => c.CartItems)
+            .SumAsync(ci => ci.Quantity);
+    }
 }
 

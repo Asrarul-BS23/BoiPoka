@@ -9,6 +9,7 @@ public class AppDbContext : IdentityDbContext<Users>
     public AppDbContext(DbContextOptions options) : base(options) { }
 
     public DbSet<Books> Books { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -37,5 +38,9 @@ public class AppDbContext : IdentityDbContext<Users>
             .HasOne(oi => oi.Order)
             .WithMany(o =>  o.OrderItems)
             .HasForeignKey(oi => oi.OrderId);
+        modelBuilder.Entity<Books>()
+            .HasOne(b => b.Category)
+            .WithMany(ct => ct.Books)
+            .HasForeignKey(b  => b.CategoryId);
     }
 }

@@ -15,9 +15,17 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderServices, OrderServices>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStrings")));
 
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+});
 builder.Services.AddIdentity<Users, IdentityRole>(options =>
 { 
     options.Password.RequireNonAlphanumeric = false;
@@ -47,8 +55,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapStaticAssets();
 

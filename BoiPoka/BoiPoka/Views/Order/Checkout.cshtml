@@ -5,32 +5,36 @@
 <h2>Your Order Details</h2>
 
 <form asp-action="Checkout" asp-controller="Order" method="post">
-    <div class="form-group">
-        <label asp-for="ReceiverName"></label>
+    <div class="form-group mb-2">
+        <label asp-for="ReceiverName" class="mb-1">Receiver Name</label>
         <input type="text" asp-for="ReceiverName" class="form-control" required />
         <span asp-validation-for="ReceiverName" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="ReceiverPhone"></label>
+    <div class="form-group mb-2">
+        <label asp-for="ReceiverPhone" class="mb-1">Receiver Phone</label>
         <input type="number" asp-for="ReceiverPhone" class="form-control" required />
         <span asp-validation-for="ReceiverPhone" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="ReceiverAddress"></label>
+    <div class="form-group mb-2">
+        <label asp-for="ReceiverAddress" class="mb-1">Receiver Address</label>
         <textarea asp-for="ReceiverAddress" class="form-control" rows="3" required></textarea>
         <span asp-validation-for="ReceiverAddress" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="PaymentMethod"></label>
-        <input type="text" asp-for="PaymentMethod" class="form-control" required />
+    <div class="form-group mb-2">
+        <label asp-for="PaymentMethod" class="mb-1">Payment Method</label>
+        <select name="PaymentMethod" id="PaymentMethod" class="form-control">
+            <option value="">Select Payment Method</option>
+            <option value="COD" selected="@(Model.PaymentMethod == "COD" ? "selected" : null)">COD</option>
+            
+        </select>
         <span asp-validation-for="PaymentMethod" class="text-danger"></span>
     </div>
 
     <input type="hidden" asp-for="OrderDate" value="@DateTime.Now" />
-    <input type="hidden" asp-for="OrderStatus" value="0" />
+    <input type="hidden" asp-for="OrderStatus" value="Pending" />
     <input type="hidden" asp-for="Subtotal" value="@Model.Subtotal"/>
     <input type="hidden" asp-for="DeliveryCharge" value="@Model.DeliveryCharge"/>
     <input type="hidden" asp-for="TotalAmount" value="@Model.TotalAmount" />

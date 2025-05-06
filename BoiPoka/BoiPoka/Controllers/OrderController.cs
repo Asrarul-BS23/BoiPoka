@@ -42,7 +42,7 @@ public class OrderController : Controller
             ModelState.AddModelError("", "Cart is empty.");
             return View(checkoutOrder);
         }
-        var order = _orderServices.GetPopulatedOrder(checkoutOrder, cart, user.Id);
+        var order = await _orderServices.GetPopulatedOrder(checkoutOrder, cart, user.Id);
         try
         {
             await _orderServices.PlaceOrderAsync(order, cart);
@@ -73,7 +73,7 @@ public class OrderController : Controller
     }
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> ManageOrders(int orderId, int orderStatus)
+    public async Task<IActionResult> ManageOrders(int orderId, string orderStatus)
     {
         var order = await _orderServices.FindOrderByIdAsync(orderId);
         if (order != null)

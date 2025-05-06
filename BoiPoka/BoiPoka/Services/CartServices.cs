@@ -72,5 +72,10 @@ public class CartService : ICartService
         _cartRepository.RemoveFromCartItemAsync(cartItem);
         await _cartRepository.SaveChangesAsync();
     }
+
+    public async Task<int> GetCartItemCountAsync(string userId)
+    {
+        return await _cartRepository.GetCartItemCountAsync(userId);
+    }
 }
 

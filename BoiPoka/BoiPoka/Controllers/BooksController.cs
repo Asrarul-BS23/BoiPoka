@@ -21,14 +21,13 @@ public class BooksController : Controller
     
     public async Task<IActionResult> Index()
     {
-        var books = await _bookService.GetAllBooksAsync();
+        var books = await _bookService.GetAllTsAsync<Books>();
         return View(books);
     }
 
     public async Task<IActionResult> Create()
     {
-        var categoryList = await _bookService.GetCategoriesAsync();
-        
+        var categoryList = await _bookService.GetAllTsAsync<Category>();
         return View(new CreateBookViewModel
         {
             CategoryList = categoryList.Select(c => new SelectListItem
@@ -84,7 +83,7 @@ public class BooksController : Controller
             var category = await _bookService.GetNullCategoryAsync("Uncategorized");
             book.Category = category;
         }
-        var categoryList = await _bookService.GetCategoriesAsync();
+        var categoryList = await _bookService.GetAllTsAsync<Category>();
         var viewModel = new CreateBookViewModel
         {
             BookId = book.BookId,

@@ -6,11 +6,11 @@ public interface IOrderServices
 {
     Task<Order> GetOrderAsync(string userId);
     Task PlaceOrderAsync(Order order, Cart cart);
-    Order GetPopulatedOrder(CheckoutViewModel checkoutOrder, Cart cart, string userId);
+    Task<Order> GetPopulatedOrder(CheckoutViewModel checkoutOrder, Cart cart, string userId);
     Task<ICollection<Order>> GetOrderHistoryAsync(string userId);
     Task<ICollection<Order>> GetAllOrderAsync();
     Task<Cart> GetCartAsync(string userId);
     Task<Order> FindOrderByIdAsync(int orderId);
-    Task UpdateOrderStatusAsync(Order order, int orderStatus);
+    Task UpdateOrderStatusAsync(Order order, string orderStatus);
 
 }

@@ -13,7 +13,7 @@ namespace BoiPoka.ViewModels
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public decimal Subtotal => OrderItems.Sum(item => item.Quantity * item.UnitPrice);
         public decimal TotalAmount => Subtotal + DeliveryCharge;
-        public int OrderStatus { get; set; }
+        public string OrderStatus { get; set; }
         public string PaymentMethod { get; set; }
     }
 }

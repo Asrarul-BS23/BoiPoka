@@ -4,6 +4,8 @@ using BoiPoka.Models;
 
 using BoiPoka.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using BoiPoka.Extensions;
+using BoiPoka.Services;
 
 namespace BoiPoka.Controllers;
 
@@ -11,11 +13,16 @@ public class AccountController : Controller
 {
     private readonly SignInManager<Users> _signInManager;
     private readonly UserManager<Users> _userManager;
+    private readonly ICartService _cartService;
 
-    public AccountController(SignInManager<Users> signInManager, UserManager<Users> userManager)
+    public AccountController(
+        SignInManager<Users> signInManager, 
+        UserManager<Users> userManager,
+        ICartService cartService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _cartService = cartService;
     }
 
     public IActionResult Login()
@@ -30,6 +37,20 @@ public class AccountController : Controller
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
             if (result.Succeeded)
             {
+                var sessionCart = HttpContext.Session.GetObject<List<int>>("Cart");
+                if (sessionCart != null && sessionCart.Any())
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (!User.IsInRole("Admin"))
+                    {
+                        foreach (var bookId in sessionCart)
+                        {
+                            await _cartService.AddToCartAsync(user.Id, bookId);
+                        }
+                    }
+                    HttpContext.Session.Remove("Cart");
+                }
+
                 return RedirectToAction("Index", "Home");
             }
             else 

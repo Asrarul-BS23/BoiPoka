@@ -20,17 +20,37 @@
             <tbody>    
                 @foreach (var order in Model)
                 {
-                        <tr>
-                            <td>@order.OrderId</td>
-                            <td>@order.User.UserName</td>
-                            <td>@order.OrderDate</td>
-                            <td class="bd-currency">@order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</td>
-                            <td>
-                                <form asp-action="ManageOrders" method="post">
-                                    <input type="number" name="orderStatus" value="@order.OrderStatus.ToString()" /> 
-                                    <input type="hidden" name="orderId" value="@order.OrderId" />
-                                    <button type="submit" class="btn btn-danger btn-sm">Update</button>
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.User.UserName</td>
+                        <td>@order.OrderDate</td>
+                        <td class="bd-currency">@order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("bn-BD"))</td>
+                        <td>
+
+                            <form asp-action="ManageOrders" method="post">
+
+                                <div class="form-group d-flex flex-row gap-2">
+                                    @{
+                                        var statusFlow = new[] { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
+                                        var idx = Array.IndexOf(statusFlow, order.OrderStatus);
+
+                                        var allowedStatus = idx >= 0
+                                        ? statusFlow.Skip(idx)
+                                        : statusFlow;
+                                    }
+                                    <select name="orderStatus" id="orderStatus" class="form-control">
+                                        @foreach(var status in allowedStatus)
+                                        {
+                                            <option value="@status" selected="@(order.OrderStatus == status ? "selected" : null)">@status</option>
+                                        }
+                                        </select>
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+
+                                        <button type="submit" class="btn btn-danger btn-sm">Update</button>
+                                    </div>
+
                                 </form>
+
                             </td>
                         </tr>
                 }

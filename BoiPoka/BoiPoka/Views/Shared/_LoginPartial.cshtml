@@ -2,6 +2,20 @@
 @inject SignInManager<Users> signInManager
 
 <ul class="navbar-nav ms-auto">
+	@if (!User.IsInRole("Admin"))
+	{
+		<li class="nav-item">
+			@try
+			{
+				@await Component.InvokeAsync("CartCount")
+			}
+			catch (Exception ex)
+			{
+				<span class="nav-link text-danger">Cart Err</span>
+			}
+
+		</li>
+	}
 	@if(signInManager.IsSignedIn(User))
 	{
 		if (User.IsInRole("Admin"))
