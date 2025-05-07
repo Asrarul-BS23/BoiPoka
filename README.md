@@ -1,9 +1,7 @@
 # BoiPoka
 **Online Book Seller**
 
-
-https://github.com/user-attachments/assets/621d8d08-a7bd-4ccf-a61a-0112a011cf6f
-
+https://github.com/user-attachments/assets/9f6fba4c-c65c-4b12-8b62-15998008e6cc
 
 ## Features
 - **Authentication & Authorization (Role-based)**
