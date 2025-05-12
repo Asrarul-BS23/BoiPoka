@@ -26,7 +26,8 @@ public class OrderController : Controller
     {
         var user = await _userManager.GetUserAsync(User);
         var order = await _orderServices.GetOrderAsync(user.Id);
-        return View(order);
+        var checkoutOrder = _orderServices.GetCheckoutViewModel(order);
+        return View(checkoutOrder);
     }
     [HttpPost]
     public async Task<IActionResult> Checkout(CheckoutViewModel checkoutOrder)
@@ -57,7 +58,7 @@ public class OrderController : Controller
         {
             ModelState.AddModelError("", "Unexpected error: " + ex.Message);
         }
-        return View(order);
+        return View(checkoutOrder);
     }
     public async Task<IActionResult> OrderHistory()
     {

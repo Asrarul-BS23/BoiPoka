@@ -11,5 +11,7 @@ public interface IBookService
     Task UpdateBookAsync(CreateBookViewModel viewModel, IFormFile file, string rootPath);
     Task<Category> GetNullCategoryAsync(string categoryName);
     Task DeleteBookAsync(int id);
+    CreateBookViewModel GetCreateBookViewModel(Books book, IEnumerable<Category> categoryList);
     Task CreateNewCategoryAsync(Category category);
+    CreateBookViewModel GetCreateBookViewModel(IEnumerable<Category> categoryList);
 }
