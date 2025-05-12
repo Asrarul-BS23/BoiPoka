@@ -13,6 +13,7 @@ public class HomeRepository : IHomeRepository
     {
         _context = context;
     }
+
     public async Task<IEnumerable<SelectListItem>> GetCategoryListAsync()
     {
         var categories = await _context.Categories.ToListAsync();
@@ -24,10 +25,7 @@ public class HomeRepository : IHomeRepository
             });
         return categoryList;
     }
-    public async Task<IEnumerable<Books>> GetAllBooksAsync()
-    {
-        return await _context.Books.ToListAsync();
-    }
+    
     public async Task<IEnumerable<Books>> FilterAndSearchAsync(BookStoreViewModel bookStoreViewModel)
     {
         var books = await _context.Books
@@ -39,14 +37,18 @@ public class HomeRepository : IHomeRepository
                 .ToListAsync();
         return books;
     }
+
     public async Task<IEnumerable<Books>> FilterByCategoryAsync(BookStoreViewModel bookStoreViewModel)
     {
         return await _context.Books
             .Where(b => b.Category.Name == bookStoreViewModel.SelectedCategoryName)
             .ToListAsync();
     }
+
     public async Task<IEnumerable<Books>> FilterBySearchAsync(BookStoreViewModel bookStoreViewModel)
     {
-        return await _context.Books.Where(b => b.Title.ToLower().Contains(bookStoreViewModel.SearchQuery)).ToListAsync();
+        return await _context.Books
+            .Where(b => b.Title.ToLower().Contains(bookStoreViewModel.SearchQuery))
+            .ToListAsync();
     }    
 }

@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace BoiPoka.ViewComponents;
 
+[Authorize]
 public class CartCountViewComponent : ViewComponent
 {
     private readonly ICartService _cartService;

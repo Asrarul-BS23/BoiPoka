@@ -3,7 +3,6 @@ using BoiPoka.Models;
 using BoiPoka.ViewModels;
 using BoiPoka.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BoiPoka.Controllers;
 [Authorize(Roles = "Admin")]
@@ -18,24 +17,19 @@ public class BooksController : Controller
         _webHost = webHost;
     }
 
-    
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var books = await _bookService.GetAllTsAsync<Books>();
         return View(books);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var categoryList = await _bookService.GetAllTsAsync<Category>();
-        return View(new CreateBookViewModel
-        {
-            CategoryList = categoryList.Select(c => new SelectListItem
-            {
-                Value = c.Name,
-                Text = c.Name
-            }).ToList()
-        });
+        var viewModel = _bookService.GetCreateBookViewModel(categoryList);
+        return View(viewModel);
     }
 
     [HttpPost]
@@ -57,7 +51,7 @@ public class BooksController : Controller
         return View(viewBook);
     }
 
-
+    [HttpGet]
     public IActionResult CreateCategory()
     {
         return View();
@@ -74,45 +68,38 @@ public class BooksController : Controller
         return RedirectToAction("Index", "Books");
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
         var book = await _bookService.GetBookByIdAsync(id);
-        if (book == null) return NotFound();
+        if (book == null)
+        {
+            return NotFound();
+        }
         if(book.Category == null)
         {
             var category = await _bookService.GetNullCategoryAsync("Uncategorized");
             book.Category = category;
         }
         var categoryList = await _bookService.GetAllTsAsync<Category>();
-        var viewModel = new CreateBookViewModel
-        {
-            BookId = book.BookId,
-            Title = book.Title,
-            Category = book.Category.Name ?? "Uncategorized",
-            Description = book.Description,
-            Author = book.Author,
-            Price = book.Price,
-            StockQuantity = book.StockQuantity,
-            CoverImage = book.CoverImage,
-            CreatedAt = book.CreatedAt,
-            CategoryList = categoryList.Select(c => new SelectListItem
-            {
-                Value = c.Name,
-                Text = c.Name
-            }).ToList()
-        };
+        var viewModel = _bookService.GetCreateBookViewModel(book, categoryList);
         return View(viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> Edit(int id, CreateBookViewModel viewModel, IFormFile file)
     {
-        if (id != viewModel.BookId) return BadRequest();
+        if (id != viewModel.BookId)
+        { 
+            return BadRequest(); 
+        }
 
         ModelState.Remove("file");
 
         if (!ModelState.IsValid)
+        {
             return View(viewModel);
+        }
         try
         {
             await _bookService.UpdateBookAsync(viewModel, file, _webHost.WebRootPath);
@@ -136,10 +123,15 @@ public class BooksController : Controller
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
-        if (id == 0) return BadRequest();
-
+        if (id == 0) 
+        {
+            return BadRequest(); 
+        }
         var book = await _bookService.GetBookByIdAsync(id);
-        if (book == null) return NotFound();
+        if (book == null)
+        {
+            return NotFound();
+        }
 
         return View(book);
     }

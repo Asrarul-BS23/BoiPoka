@@ -6,10 +6,12 @@ namespace BoiPoka.Services;
 public class CartService : ICartService
 {
     private readonly ICartRepository _cartRepository;
+    private readonly IRepository _repository;
 
-    public CartService(ICartRepository cartRepository)
+    public CartService(ICartRepository cartRepository, IRepository repository)
     {
         _cartRepository = cartRepository;
+        _repository = repository;
     }
 
     public async Task<Cart> GetCartAsync(string userId)
@@ -19,15 +21,17 @@ public class CartService : ICartService
 
     public async Task AddToCartAsync(string userId, int bookId)
     {
-        var book = await _cartRepository.GetBookByIdAsync(bookId);
+        var book = await _repository.FindByIdAsync<Books>(bookId);
         if (book == null || book.StockQuantity < 1)
+        {
             throw new InvalidOperationException("Book not available.");
+        }
 
         var cart = await _cartRepository.GetCartByUserIdAsync(userId);
         if (cart == null)
         {
             cart = new Cart { UserId = userId };
-            await _cartRepository.AddCartAsync(cart);
+            await _repository.AddAsync<Cart>(cart);
         }
 
         var existingItem = cart.CartItems.FirstOrDefault(ci => ci.BookId == bookId);
@@ -44,33 +48,36 @@ public class CartService : ICartService
             });
         }
 
-        await _cartRepository.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
     }
 
     public async Task UpdateCartItemAsync(int cartItemId, int quantity)
     {
         var cartItem = await _cartRepository.GetCartItemByIdAsync(cartItemId);
         if (cartItem == null)
+        {
             throw new InvalidOperationException("Cart item not found.");
+        }
 
         var availableStock = cartItem.Book.StockQuantity;
         cartItem.Quantity = Math.Min(quantity, availableStock);
 
         if (cartItem.Quantity < 1)
         {
-            _cartRepository.RemoveFromCartItemAsync(cartItem);
+            _repository.DeleteAsync<CartItem>(cartItem);
         }
-
-        await _cartRepository.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
     }
 
     public async Task RemoveFromCartAsync(int cartItemId)
     {
-        var cartItem = await _cartRepository.GetCartItemByIdAsync(cartItemId);
+        var cartItem = await _repository.FindByIdAsync<CartItem>(cartItemId);
         if (cartItem == null)
+        {
             throw new InvalidOperationException("Cart item not found.");
-        _cartRepository.RemoveFromCartItemAsync(cartItem);
-        await _cartRepository.SaveChangesAsync();
+        }
+        _repository.DeleteAsync<CartItem>(cartItem);
+        await _repository.SaveChangesAsync();
     }
 
     public async Task<int> GetCartItemCountAsync(string userId)

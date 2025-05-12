@@ -7,13 +7,15 @@ namespace BoiPoka.Services;
 public class OrderServices : IOrderServices
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IRepository _repository;
 
-    public OrderServices(IOrderRepository orderRepository)
+    public OrderServices(IOrderRepository orderRepository, IRepository repository)
     {
         _orderRepository = orderRepository;
+        _repository = repository;
     }
 
-    public async Task<ICollection<Order>> GetAllOrderAsync()
+    public async Task<IEnumerable<Order>> GetAllOrderAsync()
     {
         return await _orderRepository.GetAllOrdersAsync();
     }
@@ -21,6 +23,10 @@ public class OrderServices : IOrderServices
     public async Task<Order> GetOrderAsync(string userId)
     {
         var cart = await _orderRepository.GetCartByUserIdAsync(userId);
+        if (cart == null)
+        {
+            throw new InvalidOperationException("Cart Not Found!");
+        }
         return new Order { Subtotal = cart.Total, DeliveryCharge = 60, };
     }
 
@@ -32,7 +38,17 @@ public class OrderServices : IOrderServices
     {
         return await _orderRepository.GetCartByUserIdAsync(userId);
     }
-    public async Task<Order> GetPopulatedOrder(CheckoutViewModel checkoutOrder, Cart cart, string userId)
+    public async void UpdateBookQuantity(IEnumerable<OrderItem> orderItems)
+    {
+        foreach (var item in orderItems)
+        {
+            Books book = await _repository.FindByIdAsync<Books>(item.BookId);
+            book.StockQuantity = Math.Max(0, book.StockQuantity - item.Quantity);
+            await _repository.UpdateAsync<Books>(book);
+            await _repository.SaveChangesAsync();
+        }
+    }
+    public List<OrderItem> GetOrderItems(Cart cart)
     {
         var orderItems = cart.CartItems.Select(ci => new OrderItem
         {
@@ -41,12 +57,30 @@ public class OrderServices : IOrderServices
             UnitPrice = ci.Book.Price,
             TotalPrice = ci.Quantity * ci.Book.Price,
         }).ToList();
-        foreach (var item in orderItems)
+        return orderItems;
+    }
+    public CheckoutViewModel GetCheckoutViewModel(Order order)
+    {
+        var checkoutOrder = new CheckoutViewModel
         {
-            Books book = await _orderRepository.FindByIdAsync<Books>(item.BookId);
-            book.StockQuantity = book.StockQuantity - item.Quantity;
-            await _orderRepository.UpdateStockAsync(book);
-        }
+            OrderId = order.OrderId,
+            ReceiverName = order.ReceiverName,
+            ReceiverAddress = order.ReceiverAddress,
+            ReceiverPhone = order.ReceiverPhone,
+            OrderDate = order.OrderDate,
+            DeliveryCharge = order.DeliveryCharge,
+            OrderItems = order.OrderItems,
+            OrderStatus = order.OrderStatus,
+            PaymentMethod = order.PaymentMethod
+        };
+        return checkoutOrder;
+    }
+    public async Task<Order> GetPopulatedOrder(CheckoutViewModel checkoutOrder, Cart cart, string userId)
+    {
+        var orderItems = GetOrderItems(cart);
+            
+        UpdateBookQuantity(orderItems);
+
         var subtotal = orderItems.Sum(oi => oi.TotalPrice);
         var order = new Order {
             ReceiverName = checkoutOrder.ReceiverName,
@@ -65,19 +99,22 @@ public class OrderServices : IOrderServices
     }
     public async Task PlaceOrderAsync(Order order, Cart cart)
     {
-        await _orderRepository.AddOrderAsync(order);
+        await _repository.AddAsync<Order>(order);
         await _orderRepository.RemoveRangeCartItemsAsync(cart);
-        await _orderRepository.RemoveCartAsync(cart);
-        await _orderRepository.SaveChangesAsync();
+        await _repository.DeleteAsync<Cart>(cart);
+        await _repository.SaveChangesAsync();
+
     }
 
     public async Task<Order> FindOrderByIdAsync(int orderId)
     {
-        return await _orderRepository.FindByIdAsync<Order>(orderId);
+        return await _repository.FindByIdAsync<Order>(orderId);
     }
     public async Task UpdateOrderStatusAsync(Order order, string orderStatus)
     { 
-            order.OrderStatus = orderStatus;
-            await _orderRepository.SaveChangesAsync();
+        order.OrderStatus = orderStatus;
+
+        await _repository.UpdateAsync<Order>(order);
+        await _repository.SaveChangesAsync();
     }
 }

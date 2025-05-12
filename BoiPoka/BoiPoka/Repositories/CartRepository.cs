@@ -21,31 +21,11 @@ public class CartRepository : ICartRepository
             .FirstOrDefaultAsync(c => c.UserId == userId);
     }
 
-    public async Task<Books> GetBookByIdAsync(int bookId)
-    {
-        return await _context.Books.FindAsync(bookId);
-    }
-
     public async Task<CartItem> GetCartItemByIdAsync(int cartItemId)
     {
         return await _context.CartItems
             .Include(ci => ci.Book)
             .FirstOrDefaultAsync(ci => ci.Id == cartItemId);
-    }
-
-    public async Task AddCartAsync(Cart cart)
-    {
-        await _context.Carts.AddAsync(cart);
-    }
-
-    public async Task SaveChangesAsync()
-    {
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveFromCartItemAsync(CartItem cartItem)
-    {
-        _context.CartItems.Remove(cartItem);
     }
 
     public async Task<int> GetCartItemCountAsync(string userId)

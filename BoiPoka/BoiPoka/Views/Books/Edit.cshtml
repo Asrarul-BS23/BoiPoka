@@ -40,10 +40,6 @@
 			</div>
 			<div class="mb-3">
 				<label asp-for="Category" class="form-label"></label>
-				@foreach(var category in Model.CategoryList)
-				{
-					Console.WriteLine(category.Text);
-				}
 				<select asp-for="Category" asp-items="Model.CategoryList" class="form-select">
 					<option value="">-- Select a Category --</option>
 				</select>
